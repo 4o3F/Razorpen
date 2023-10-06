@@ -1,13 +1,14 @@
 import {useRecoilValue} from "recoil";
-import global_errors from "../store/global_errors.ts";
-import {Button, Card, CardBody, CardFooter, CardHeader, Code} from "@chakra-ui/react";
+import global_errors_store from "../store/global_errors_store.ts";
+import {Button, Card, CardBody, CardFooter, CardHeader, Code, Icon} from "@chakra-ui/react";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {ArrowBackIcon, WarningTwoIcon} from "@chakra-ui/icons";
+import {IoArrowBackCircleOutline} from "react-icons/io5";
+import {AiOutlineWarning} from "react-icons/ai";
 
 export default function Error() {
     const navigate = useNavigate()
-    const global_error = useRecoilValue(global_errors)
+    const global_error = useRecoilValue(global_errors_store)
 
     useEffect(() => {
         if (!global_error.has_error) {
@@ -20,7 +21,7 @@ export default function Error() {
             <Card className="flex w-2/3">
                 <CardHeader className="text-2xl font-bold">
                     <div className="flex flex-row gap-3 items-center">
-                        <WarningTwoIcon className="flex fill-orange-400" color="red.500"/>
+                        <Icon as={AiOutlineWarning} className="flex fill-orange-400" color="red.500"/>
                         <p className="flex">An error has occurred</p>
                     </div>
                 </CardHeader>
@@ -40,7 +41,7 @@ export default function Error() {
                     </Code>
                 </CardBody>
                 <CardFooter>
-                    <Button leftIcon={<ArrowBackIcon/>} colorScheme="teal" variant="outline" onClick={
+                    <Button leftIcon={<Icon as={IoArrowBackCircleOutline}/>} colorScheme="teal" variant="outline" onClick={
                         () => navigate("/")
                     }>
                         Go back to dashboard

@@ -1,15 +1,15 @@
 import {useRecoilState} from "recoil";
-import global_status from "../store/global_status.ts";
-import {Initializer} from "../components/Initializer.tsx";
-import {Projects} from "../components/Projects.tsx";
+import global_status_store from "../store/global_status_store.ts";
+import {Initializer} from "../components/dashboard/Initializer.tsx";
+import {DashboardBase} from "../components/dashboard/DashboardBase.tsx";
 
 export default function Dashboard() {
 
-    const [_global_status, _] = useRecoilState(global_status)
+    const [global_status, _] = useRecoilState(global_status_store)
 
     return (
         <div>
-            {_global_status.initialized ? <Projects /> : <Initializer/>}
+            {global_status.initialized ? <DashboardBase /> : <Initializer/>}
         </div>
     );
 

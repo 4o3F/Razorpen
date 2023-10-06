@@ -16,6 +16,9 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "process": {
+        "exit": true
       }
     },
     "bundle": {

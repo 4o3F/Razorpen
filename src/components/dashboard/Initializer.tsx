@@ -1,6 +1,6 @@
 import {useRecoilState} from "recoil";
-import global_status from "../store/global_status.ts";
-import global_errors from "../store/global_errors.ts";
+import global_status_store from "../../store/global_status_store.ts";
+import global_errors_store from "../../store/global_errors_store.ts";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {invoke} from "@tauri-apps/api";
@@ -9,8 +9,8 @@ import {Spinner} from "@chakra-ui/react";
 import {motion} from "framer-motion";
 
 export function Initializer() {
-    const [_global_status, set_global_status] = useRecoilState(global_status)
-    const [_, set_global_error] = useRecoilState(global_errors)
+    const [_global_status, set_global_status] = useRecoilState(global_status_store)
+    const [_, set_global_error] = useRecoilState(global_errors_store)
     const navigate = useNavigate()
 
     const [loading_text, set_loading_text] = useState("Loading...")

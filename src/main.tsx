@@ -9,9 +9,9 @@ import {
 import './index.css'
 import {ChakraProvider} from "@chakra-ui/react";
 import {AnimatedRouter} from "./components/common/AnimatedRouter.tsx";
+import consola from "consola";
 
-
-console.log("Reloaded at " + new Date())
+consola.warn("Reloaded at " + new Date())
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
