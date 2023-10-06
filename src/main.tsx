@@ -3,44 +3,23 @@ import ReactDOM from "react-dom/client";
 import {RecoilRoot} from "recoil";
 import 'reflect-metadata'
 import {
-    createHashRouter,
-    RouterProvider
+    HashRouter
 } from "react-router-dom";
 
 import './index.css'
 import {ChakraProvider} from "@chakra-ui/react";
+import {AnimatedRouter} from "./components/common/AnimatedRouter.tsx";
 
-import Editor from "./pages/editor.tsx";
-import Settings from "./pages/settings.tsx";
-import Dashboard from "./pages/dashboard.tsx";
-import Error from "./pages/error.tsx";
 
 console.log("Reloaded at " + new Date())
-
-const router = createHashRouter([
-    {
-        path: '/',
-        element: <Dashboard/>
-    },
-    {
-        path: '/editor',
-        element: <Editor/>,
-    },
-    {
-        path: '/settings',
-        element: <Settings/>
-    },
-    {
-        path: '/error',
-        element: <Error/>
-    }
-], {})
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
         <ChakraProvider>
             <RecoilRoot>
-                <RouterProvider router={router}/>
+                <HashRouter>
+                    <AnimatedRouter/>
+                </HashRouter>
             </RecoilRoot>
         </ChakraProvider>
     </React.StrictMode>,

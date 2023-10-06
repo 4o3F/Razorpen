@@ -18,18 +18,24 @@ lazy_static! {
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-async fn init_backend() -> Result<(), String> {
+async fn init_database() -> Result<(), String> {
     let result = database::init_database().await;
     if result.is_err() {
         return result;
     }
-    let tectonic_existence = latex::check_tectonic_existence();
-    log::info!("Tectonic existence: {}",tectonic_existence);
-    if !tectonic_existence {
-        let result = latex::download_tectonic().await;
-        if result.is_err() {
-            return result;
-        }
+    Ok(())
+}
+
+#[tauri::command]
+fn check_tectonic_existence() -> bool {
+    latex::check_tectonic_existence()
+}
+
+#[tauri::command]
+async fn download_tectonic() -> Result<(), String> {
+    let result = latex::download_tectonic().await;
+    if result.is_err() {
+        return result;
     }
     Ok(())
 }
@@ -37,7 +43,11 @@ async fn init_backend() -> Result<(), String> {
 fn main() {
     env_logger::init();
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![init_backend])
+        .invoke_handler(tauri::generate_handler![
+            init_database,
+            check_tectonic_existence,
+            download_tectonic
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
