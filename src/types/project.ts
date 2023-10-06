@@ -13,4 +13,12 @@ export default class Project {
     // In UNIX timestamp format
     @Expose({name: "last_edit_date"})
     last_edit_date: bigint
+
+    constructor(id: bigint, title: string, path: string, last_edit_date: bigint) {
+        this.id = id;
+        this.title = title;
+        this.path = path;
+        this.last_edit_date = last_edit_date;
+    }
+
 }

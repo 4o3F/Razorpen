@@ -1,3 +1,6 @@
+use std::path::PathBuf;
+use crate::utils;
+
 pub async fn init_database() -> Result<(), String> {
     // Check if database file exists
 
@@ -31,12 +34,42 @@ pub async fn init_database() -> Result<(), String> {
 
     if !std::path::Path::new(&database_path).exists() {
         // Razorpen database don't exist, creating
-        std::fs::OpenOptions::new().create_new(true).write(true).open(database_path).unwrap();
-        log::info!("Successfully created Razorpen database file")
-        // TODO: Do SQL table creation
+        std::fs::OpenOptions::new().create_new(true).write(true).open(&database_path).unwrap();
+        log::info!("Successfully created Razorpen database file");
+        // Do SQL table creation
+        let result = create_tables(&database_path);
+        if result.is_err() {
+            // Error already handled in create_tables
+            return result
+        }
+        log::info!("Successfully created Razorpen database tables")
     } else {
         log::debug!("Razorpen database file already exists")
     }
 
+    Ok(())
+}
+
+fn create_tables(database_path: &PathBuf) -> Result<(), String> {
+    let connection = sqlite::open(database_path);
+    if connection.is_err() {
+        return utils::handle_error(String::from("Error opening database connection") + connection.err().unwrap().message.unwrap().as_str());
+    }
+    let connection = connection.unwrap();
+    let result = connection.execute(
+        "
+        create table projects
+        (
+            pid       INTEGER not null
+                constraint projects_pk
+                    primary key autoincrement,
+            path      TEXT    not null,
+            last_edit INTEGER not null
+        );
+        ",
+    );
+    if result.is_err() {
+        return utils::handle_error(String::from("Error creating projects table") + result.err().unwrap().message.unwrap().as_str());
+    }
     Ok(())
 }
