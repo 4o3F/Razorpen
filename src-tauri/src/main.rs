@@ -6,7 +6,9 @@ use lazy_static::lazy_static;
 mod latex;
 mod database;
 mod utils;
+mod types;
 
+// Start initializing global variables
 lazy_static! {
     static ref HOME_DIR: String = {
         let home_dir = directories::UserDirs::new().unwrap();
@@ -14,7 +16,9 @@ lazy_static! {
         let home_dir = home_dir.join(".razorpen/");
         home_dir.to_str().unwrap().to_string()
     };
+    static ref DATABASE_CONNECTION: std::sync::Mutex<Option<sqlite::Connection>> = std::sync::Mutex::new(None);
 }
+
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]

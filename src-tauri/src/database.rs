@@ -3,7 +3,6 @@ use crate::utils;
 
 pub async fn init_database() -> Result<(), String> {
     // Check if database file exists
-
     let home_dir = std::path::Path::new(crate::HOME_DIR.as_str());
     let config_path = home_dir.join("razorpen.toml");
     let database_path = home_dir.join("razorpen.db");
@@ -40,12 +39,23 @@ pub async fn init_database() -> Result<(), String> {
         let result = create_tables(&database_path);
         if result.is_err() {
             // Error already handled in create_tables
-            return result
+            return result;
         }
         log::info!("Successfully created Razorpen database tables")
     } else {
         log::debug!("Razorpen database file already exists")
     }
+
+    let mut connection = crate::DATABASE_CONNECTION.lock().unwrap();
+    if connection.is_none() {
+        let result = sqlite::open(&database_path);
+        if result.is_err() {
+            return utils::handle_error(String::from("Error opening database connection") + result.err().unwrap().message.unwrap().as_str());
+        }
+        *connection = Some(result.unwrap());
+    }
+
+    log::info!("Successfully opened Razorpen database");
 
     Ok(())
 }
@@ -63,6 +73,7 @@ fn create_tables(database_path: &PathBuf) -> Result<(), String> {
             pid       INTEGER not null
                 constraint projects_pk
                     primary key autoincrement,
+            title     TEXT    not null,
             path      TEXT    not null,
             last_edit INTEGER not null
         );
@@ -72,4 +83,8 @@ fn create_tables(database_path: &PathBuf) -> Result<(), String> {
         return utils::handle_error(String::from("Error creating projects table") + result.err().unwrap().message.unwrap().as_str());
     }
     Ok(())
+}
+
+fn get_recent_projects() -> Result<String, String> {
+    Ok(String::from(""))
 }
