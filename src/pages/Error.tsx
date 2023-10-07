@@ -25,7 +25,7 @@ export default function Error() {
                         <p className="flex">An error has occurred</p>
                     </div>
                 </CardHeader>
-                <CardBody>
+                <CardBody paddingBottom={0}>
                     <p className="font-bold">
                         If you believe this shouldn't happen,
                         please copy the following error message and create a issue at
@@ -36,14 +36,15 @@ export default function Error() {
                         https://github.com/4o3F/Razorpen
                     </a>
                     <br/>
-                    <Code display="block">
+                    <Code display="block" className={"p-2"}>
                         {global_error.error_message}
                     </Code>
                 </CardBody>
                 <CardFooter>
-                    <Button leftIcon={<Icon as={IoArrowBackCircleOutline}/>} colorScheme="teal" variant="outline" onClick={
-                        () => navigate("/")
-                    }>
+                    <Button leftIcon={<Icon as={IoArrowBackCircleOutline}/>} colorScheme="teal" variant="outline"
+                            onClick={
+                                () => navigate("/")
+                            }>
                         Go back to dashboard
                     </Button>
                 </CardFooter>

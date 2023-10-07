@@ -21,14 +21,14 @@ pub async fn download_tectonic() -> Result<(), String> {
     let response = client.get("https://api.github.com/repos/tectonic-typesetting/tectonic/releases")
         .send().await;
     if response.is_err() {
-        return utils::handle_error(String::from("Network error (Stage 1)"));
+        return utils::handle_void_error(String::from("Network error (Stage 1)"));
     }
     let response = response.unwrap();
 
     let response_status = response.status();
     let response_body = response.text().await.unwrap();
     if response_status != 200 {
-        return utils::handle_error(String::from("Failed to get tectonic release(stage 1), error code ") + response_status.to_string().as_str() + ", error message: " + response_body.as_str());
+        return utils::handle_void_error(String::from("Failed to get tectonic release(stage 1), error code ") + response_status.to_string().as_str() + ", error message: " + response_body.as_str());
     }
     let response: Vec<serde_json::Value> = serde_json::from_str(&response_body).unwrap();
     let asset_url = response[0]["assets_url"].as_str().unwrap();
@@ -38,13 +38,13 @@ pub async fn download_tectonic() -> Result<(), String> {
     let response = client.get(asset_url)
         .send().await;
     if response.is_err() {
-        return utils::handle_error(String::from("Network error (Stage 2)"));
+        return utils::handle_void_error(String::from("Network error (Stage 2)"));
     }
     let response = response.unwrap();
     let response_status = response.status();
     let response_body = response.text().await.unwrap();
     if response_status != 200 {
-        return utils::handle_error(String::from("Failed to get tectonic release(stage 2), error code ") + response_status.to_string().as_str() + ", error message: " + response_body.as_str());
+        return utils::handle_void_error(String::from("Failed to get tectonic release(stage 2), error code ") + response_status.to_string().as_str() + ", error message: " + response_body.as_str());
     }
     let response: Vec<serde_json::Value> = serde_json::from_str(&response_body).unwrap();
 
@@ -65,14 +65,14 @@ pub async fn download_tectonic() -> Result<(), String> {
     }
 
     if browser_download_url.is_empty() {
-        return utils::handle_error(String::from("Failed to find tectonic release asset"));
+        return utils::handle_void_error(String::from("Failed to find tectonic release asset"));
     }
     // End getting asset download url for different platforms
 
     // Start downloading tectonic binary
     let response = client.get(&browser_download_url).send().await;
     if response.is_err() {
-        return utils::handle_error(String::from("Network error (Stage 3)"));
+        return utils::handle_void_error(String::from("Network error (Stage 3)"));
     }
     let response = response.unwrap();
     {
@@ -80,7 +80,7 @@ pub async fn download_tectonic() -> Result<(), String> {
         let mut file = std::fs::File::create(crate::HOME_DIR.clone() + "tectonic_tmp.zip").unwrap();
         let result = std::io::copy(&mut content, &mut file);
         if result.is_err() {
-            return utils::handle_error(String::from("File download error"));
+            return utils::handle_void_error(String::from("File download error"));
         } else {
             log::info!("File download complete");
         }
@@ -90,7 +90,7 @@ pub async fn download_tectonic() -> Result<(), String> {
     // Start extracting tectonic binary zip file
     let result = zip_extract::extract(std::io::Cursor::new(std::fs::read(crate::HOME_DIR.clone() + "/tectonic_tmp.zip").unwrap()), &std::path::PathBuf::from(crate::HOME_DIR.clone()), true);
     if result.is_err() {
-        return utils::handle_error(String::from("File extraction error"));
+        return utils::handle_void_error(String::from("File extraction error"));
     } else {
         log::info!("File extraction complete");
     }

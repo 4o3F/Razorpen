@@ -44,13 +44,23 @@ async fn download_tectonic() -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+async fn get_recent_projects() -> Result<String, String> {
+    let result = database::get_recent_projects();
+    if result.is_err() {
+        return result;
+    }
+    Ok(result.unwrap())
+}
+
 fn main() {
     env_logger::init();
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             init_database,
             check_tectonic_existence,
-            download_tectonic
+            download_tectonic,
+            get_recent_projects
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

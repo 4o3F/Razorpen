@@ -1,4 +1,4 @@
-export function ProjectCreation() {
+export default function ProjectCreation() {
     return (
         <></>
     );

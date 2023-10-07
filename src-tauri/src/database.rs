@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use crate::utils;
+use crate::{types, utils};
 
 pub async fn init_database() -> Result<(), String> {
     // Check if database file exists
@@ -50,7 +50,7 @@ pub async fn init_database() -> Result<(), String> {
     if connection.is_none() {
         let result = sqlite::open(&database_path);
         if result.is_err() {
-            return utils::handle_error(String::from("Error opening database connection") + result.err().unwrap().message.unwrap().as_str());
+            return utils::handle_void_error(String::from("Error opening database connection") + result.err().unwrap().message.unwrap().as_str());
         }
         *connection = Some(result.unwrap());
     }
@@ -63,7 +63,7 @@ pub async fn init_database() -> Result<(), String> {
 fn create_tables(database_path: &PathBuf) -> Result<(), String> {
     let connection = sqlite::open(database_path);
     if connection.is_err() {
-        return utils::handle_error(String::from("Error opening database connection") + connection.err().unwrap().message.unwrap().as_str());
+        return utils::handle_void_error(String::from("Error opening database connection") + connection.err().unwrap().message.unwrap().as_str());
     }
     let connection = connection.unwrap();
     let result = connection.execute(
@@ -80,11 +80,46 @@ fn create_tables(database_path: &PathBuf) -> Result<(), String> {
         ",
     );
     if result.is_err() {
-        return utils::handle_error(String::from("Error creating projects table") + result.err().unwrap().message.unwrap().as_str());
+        return utils::handle_void_error(String::from("Error creating projects table") + result.err().unwrap().message.unwrap().as_str());
     }
     Ok(())
 }
 
-fn get_recent_projects() -> Result<String, String> {
-    Ok(String::from(""))
+// Will return error message or success result in json format
+pub fn get_recent_projects() -> Result<String, String> {
+    let connection = crate::DATABASE_CONNECTION.lock().unwrap();
+    if connection.is_none() {
+        return utils::handle_string_error(String::from("Database connection is not initialized"));
+    }
+    let connection = connection.as_ref().unwrap();
+
+    let mut projects: Vec<types::Project> = vec![];
+
+    let query = "SELECT * FROM projects ORDER BY last_edit DESC LIMIT 10";
+
+    let statement = connection.prepare(query);
+    if statement.is_err() {
+        return utils::handle_string_error(String::from("Error preparing query statement"));
+    }
+    let statement = statement.unwrap();
+    for row in statement
+        .into_iter()
+        .map(|row| row)
+    {
+        if row.is_err() {
+            return utils::handle_string_error(String::from("Error reading row"));
+        }
+        let row = row.unwrap();
+        let pid: i64 = row.read::<i64, _>("pid");
+        let title: String = row.read::<&str, _>("title").to_string();
+        let path: String = row.read::<&str, _>("path").to_string();
+        let last_edit: i64 = row.read::<i64, _>("last_edit");
+        let project = types::Project::new(pid, title, path, last_edit);
+        projects.push(project);
+    }
+    let json = serde_json::to_string(&projects);
+    if json.is_err() {
+        return utils::handle_string_error(String::from("Error converting project data to json"));
+    }
+    Ok(json.unwrap())
 }

@@ -2,7 +2,7 @@ import {Expose} from "class-transformer";
 
 export default class Project {
     @Expose({name: "pid"})
-    id: bigint
+    pid: bigint
 
     @Expose({name: "title"})
     title: string
@@ -11,14 +11,14 @@ export default class Project {
     path: string
 
     // In UNIX timestamp format
-    @Expose({name: "last_edit_date"})
-    last_edit_date: bigint
+    @Expose({name: "last_edit"})
+    last_edit: bigint
 
-    constructor(id: bigint, title: string, path: string, last_edit_date: bigint) {
-        this.id = id;
+    constructor(pid: bigint, title: string, path: string, last_edit: bigint) {
+        this.pid = pid;
         this.title = title;
         this.path = path;
-        this.last_edit_date = last_edit_date;
+        this.last_edit = last_edit;
     }
 
 }
