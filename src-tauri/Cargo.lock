@@ -2379,8 +2379,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2ff9a1f06a88b01621b7ae906ef0211290d1c8a168a15542486a8f61c0833b9"
 
 [[package]]
-name = "razor_pen"
-version = "0.0.0"
+name = "razorpen"
+version = "0.0.1"
 dependencies = [
  "directories",
  "env_logger",

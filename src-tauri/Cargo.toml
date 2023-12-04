@@ -1,6 +1,6 @@
 [package]
-name = "razor_pen"
-version = "0.0.0"
+name = "razorpen"
+version = "0.0.1"
 description = "A desktop Latex editor using Tauri"
 authors = ["403F"]
 license = "AGPL-3"
