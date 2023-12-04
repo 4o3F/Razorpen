@@ -10,8 +10,13 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@radix-icons/vue": "^1.0.0",
     "@tauri-apps/api": "^1.5.1",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
     "pinia": "^2.1.7",
+    "tailwind-merge": "^2.1.0",
+    "tailwindcss-animate": "^1.0.7",
     "vue": "^3.3.4"
   },
   "devDependencies": {
